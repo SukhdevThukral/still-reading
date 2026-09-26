@@ -9,6 +9,7 @@
     let currentTime = $state('');
     let timeOnPage = $state(0);
     let wasmState: any = $state(null);
+    let showLanding = $state(true);
 
     const paragraphs = $derived([
         {
@@ -64,6 +65,10 @@
             };
             updateTime();
 
+            setTimeout(() => {
+                showLanding = false;
+            }, 3000)
+
             idleTick = setInterval(() => {
                 if (wasmState) {
                     wasmState.tick_idle();
@@ -99,10 +104,13 @@
 
         init();
 
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('mousemove', handleMouseMove);
+
         return () => {
             clearInterval(idleTick);
-            window.addEventListener('scroll', handleScroll);
-            window.addEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
         };
     });
 </script>
