@@ -44,7 +44,29 @@
             text: 
                 escalation < 5 
                     ? 'Notes: Subject believed to be unaware of this filing. Standard protocol applies. Do not make direct contact.'
-                    : ``
+                    : 'Notes: The subject is reading this sentence. Do not let it know you have read this.'
         }
     ]);
+
+    onMount(async () => {
+        isReturning = !!localStorage.getItem('still-reading-visited');
+        localStorage.setItem('still-reading-visited', 'true')
+
+        const wasm = await import('wasm-core');
+        wasmState = new wasm.DocumentState(isReturning);
+        if (isReturning) escalation = 1;
+
+        const updateTime = () => {
+            currentTime = new Date().toLocaleTimeString();
+        };
+        updateTime();
+
+        const idleTick = setInterval(() => {
+            if (wasmState) {
+                wasmState.tick_idle();
+                idleSeconds = wasmState.idle_seconds;
+                escalation = wasmState.get_escalation();
+            }
+        })
+    })
 </script>
