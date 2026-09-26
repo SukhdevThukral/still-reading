@@ -17,6 +17,34 @@
                 escalation < 2
                     ? 'The subject was last observed at an undisclosed location. Behavioral patterns suggest awareness of surveillance. Approach with caution.'
                     : 'The subject has not moved. The subject is aware. Do not make contact.'
+        },
+        {
+            id: 'p2',
+            text:
+                escalation < 3 
+                    ?   'Physical description: unremarkable, Height and weight within normal parameters. No distinguishing features on record.'
+                    :   `Physical description updated at ${currentTime}: The subject is seated. The subject is reading. Eyes moving left to right.`
+        },
+        {
+            id: 'p3',
+            text:
+                escalation < 1
+                    ? 'Case status: ACTIVE. Filed under routine surveillance. No immediate action required.'
+                    : 'Case status: ESCALATED. Subject has scrolled back. Subject is looking for something. Subject knows something is wrong.'
+        },
+        {
+            id: 'p4',
+            text: 
+                escalation < 4
+                    ? `Last known contact: ${currentTime}. No further updates at this time. File to be reviewed quarterly.`
+                    : `Last known contact: right now. The subject has been on this page for ${timeOnPage} seconds. The subject has not left.`
+        },
+        {
+            id: 'p5',
+            text: 
+                escalation < 5 
+                    ? 'Notes: Subject believed to be unaware of this filing. Standard protocol applies. Do not make direct contact.'
+                    : ``
         }
     ]);
 </script>
