@@ -48,25 +48,61 @@
         }
     ]);
 
-    onMount(async () => {
-        isReturning = !!localStorage.getItem('still-reading-visited');
-        localStorage.setItem('still-reading-visited', 'true')
+    onMount(() => {
+        let idleTick: ReturnType<typeof setInterval>;
 
-        const wasm = await import('wasm-core');
-        wasmState = new wasm.DocumentState(isReturning);
-        if (isReturning) escalation = 1;
+        const init = async () => {
+            isReturning = !!localStorage.getItem('still-reading-visited');
+            localStorage.setItem('still-reading-visited', 'true')
 
-        const updateTime = () => {
-            currentTime = new Date().toLocaleTimeString();
+            const wasm = await import('wasm-core');
+            wasmState = new wasm.DocumentState(isReturning);
+            if (isReturning) escalation = 1;
+
+            const updateTime = () => {
+                currentTime = new Date().toLocaleTimeString();
+            };
+            updateTime();
+
+            idleTick = setInterval(() => {
+                if (wasmState) {
+                    wasmState.tick_idle();
+                    idleSeconds = wasmState.idle_seconds;
+                    escalation = wasmState.get_escalation();
+
+                }
+                timeOnPage += 1;
+                updateTime();
+            }, 1000);            
         };
-        updateTime();
 
-        const idleTick = setInterval(() => {
+        const handleScroll = () => {
+            if (!wasmState) return;
+            const scrolled  = window.scrollY;
+            const total = document.body.scrollHeight - window.innerHeight;
+            const depth = scrolled / total;
+            const scrolledUp = scrolled < lastScrollY;
+            if (scrolledUp) timesScrolledUp += 1;
+            lastScrollY = scrolled;
+            wasmState.update_scroll(depth, scrolledUp);
+            wasmState.reset_idle();
+            idleSeconds =  0;
+            escalation = wasmState.get_escalation();
+        };
+
+        const handleMouseMove = () => {
             if (wasmState) {
-                wasmState.tick_idle();
-                idleSeconds = wasmState.idle_seconds;
-                escalation = wasmState.get_escalation();
+                wasmState.reset_idle();
+                idleSeconds = 0;
             }
-        })
-    })
+        };
+
+        init();
+
+        return () => {
+            clearInterval(idleTick);
+            window.addEventListener('scroll', handleScroll);
+            window.addEventListener('mousemove', handleMouseMove);
+        };
+    });
 </script>
