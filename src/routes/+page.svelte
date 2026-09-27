@@ -68,7 +68,7 @@
                 i++;
                 if (i> fullText.length) clearInterval(typewriter);
             }, 40);
-            
+
             const updateTime = () => {
                 currentTime = new Date().toLocaleTimeString();
             };
@@ -214,6 +214,8 @@
         align-items: center;
         justify-content: center;
         z-index: 100;
+        padding: 20px;
+        text-align: center;
     }
 
     .typewriter{
@@ -221,6 +223,8 @@
         font-size: 1rem;
         font-family: 'Courier New', monospace;
         letter-spacing: 0.05em;
+        max-width: 600px;
+        display: inline-block;
     }
 
     .cursor {
