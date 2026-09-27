@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { before } from 'node:test';
+
     import {onMount} from 'svelte';
 
     let escalation = $state(0);
@@ -10,6 +12,7 @@
     let timeOnPage = $state(0);
     let wasmState: any = $state(null);
     let showLanding = $state(true);
+    let landingText = $state('');
 
     const paragraphs = $derived([
         {
@@ -114,3 +117,78 @@
         };
     });
 </script>
+
+{#if showLanding}
+    <div class="landing">
+        <span class="typewriter">{landingText}<span class="cursor">|</span></span>
+    </div>
+{/if}
+
+{#if !showLanding}
+    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5}>
+        <div class="document">
+            <div class="doc-header">
+                <div class="seal-slot">
+                    <div class="seal-placeholder">D.U.C</div>
+                </div>
+                <div class="agency-name">DEPARTMENT OF UNRESOLVED CASES</div>
+                <div class="form-number">FORM 17-C - ACTIVE SURVEILLANCE REPORT</div>
+                <div class="case-meta">
+                    <span>CASE NO: DUC-2024-∞ </span>
+                    <span>STATUS: {escalation < 3 ? 'ACTIVE' : 'ESCALATED'}</span>
+                    <span>FILED: {currentTime}</span>
+                </div>
+            </div>
+            <div class="fields">
+                <div class="field-row">
+                    <span class="field-label">LAST KNOWN LOCATION:</span>
+                    <span class="redacted" class:revealed={escalation>=3}>THIS DEVICE</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">FILED BY:</span>
+                    <span class="redacted" class:revealed={escalation>=4}>[REDACTED]</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">TIME ON RECORD:</span>
+                    <span class="live">{timeOnPage}s and counting</span>
+                </div>
+            </div>
+            <hr class="divider"/>
+
+            {#each paragraphs as p (p.id)}
+                <p class="doc-para" class:wrong={escalation >= 3}  class:tilt={escalation>=4}>
+                    {p.text}
+                </p>
+            {/each}
+
+            {#if idleSeconds >= 5 && escalation >= 3}
+                <div class="update-stamp">
+                    ▸ UPDATE {currentTime}: THE SUBJECT HAS NOT MOVED.
+                </div>
+            {/if}
+
+            {#if idleSeconds>= 15 && escalation >= 4}
+                <div class="update-stamp warning">
+                    ▸ UPDATE {currentTime}: THE SUBJECT IS  STILL THERE. DO NOT LET IT KNOW YOU HAVE READ THIS.
+                </div>
+            {/if}
+
+            {#if isReturning}
+                <div class="returning-note">
+                    ▸ This file has been accessed before. Previous session on record.
+                </div>
+            {/if}
+
+            {#if escalation >= 5}
+                <div class="final-line">
+                    This document will not close.
+                </div>
+            {/if}
+
+            <div class="doc-footer">
+                <span>DUC FORM 17-C • UNAUTHORIZED ACCESS PROHIBITED</span>
+                <span>QUI LEGIT SCIT</span>
+            </div>
+        </div>
+    </main>
+{/if}
