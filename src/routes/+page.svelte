@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
+    import {getParagraphs} from '$lib/document'
     import '../styles/document.css';
 
     let escalation = $state(0);
@@ -13,43 +14,7 @@
     let showLanding = $state(true);
     let landingText = $state('');
 
-    const paragraphs = $derived([
-        {
-            id: 'p1',
-            text:
-                escalation < 2
-                    ? 'The subject was last observed at an undisclosed location. Behavioral patterns suggest awareness of surveillance. Approach with caution.'
-                    : 'The subject has not moved. The subject is aware. Do not make contact.'
-        },
-        {
-            id: 'p2',
-            text:
-                escalation < 3 
-                    ?   'Physical description: unremarkable, Height and weight within normal parameters. No distinguishing features on record.'
-                    :   `Physical description updated at ${currentTime}: The subject is seated. The subject is reading. Eyes moving left to right.`
-        },
-        {
-            id: 'p3',
-            text:
-                escalation < 1
-                    ? 'Case status: ACTIVE. Filed under routine surveillance. No immediate action required.'
-                    : 'Case status: ESCALATED. Subject has scrolled back. Subject is looking for something. Subject knows something is wrong.'
-        },
-        {
-            id: 'p4',
-            text: 
-                escalation < 4
-                    ? `Last known contact: ${currentTime}. No further updates at this time. File to be reviewed quarterly.`
-                    : `Last known contact: right now. The subject has been on this page for ${timeOnPage} seconds. The subject has not left.`
-        },
-        {
-            id: 'p5',
-            text: 
-                escalation < 5 
-                    ? 'Notes: Subject believed to be unaware of this filing. Standard protocol applies. Do not make direct contact.'
-                    : 'Notes: The subject is reading this sentence. Do not let it know you have read this.'
-        }
-    ]);
+    const paragraphs = $derived(getParagraphs(escalation, currentTime, timeOnPage));
 
     $effect(() => {
         const tick = setInterval(() => {
@@ -135,7 +100,9 @@
 
 {#if !showLanding}
     <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5}>
-        <div class="document">
+
+
+        <div class="doc-page">
             <div class="doc-header">
                 <div class="seal-slot">
                     <div class="seal-placeholder">D.U.C</div>
@@ -150,6 +117,10 @@
             </div>
             <div class="fields">
                 <div class="field-row">
+                    <span class="field-label">SUBJECT NAME:</span>
+                    <span class="redacted" class:revealed={escalation >= 2}>CLASSIFIED</span>
+                </div>
+                <div class="field-row">
                     <span class="field-label">LAST KNOWN LOCATION:</span>
                     <span class="redacted" class:revealed={escalation>=3}>THIS DEVICE</span>
                 </div>
@@ -161,8 +132,31 @@
                     <span class="field-label">TIME ON RECORD:</span>
                     <span class="live">{timeOnPage}s and counting</span>
                 </div>
+                <div class="field-row">
+                    <span class="field-label">CASE REFERENCE:</span>
+                    <span class="live">{timeOnPage}s and counting</span>
+                </div>
+                <div class="field-row">
+                    <span class="field-label">CLASSIFICATION:</span>
+                    <span class="live">RESTRICTED - INTERNAL USE ONLY</span>
+                </div>
             </div>
+
             <hr class="divider"/>
+
+            <p class="doc-para">
+                This report has been compiled in accordance with Surveillance Protocol 17-C 
+                as issued by the Department of Unresolved Cases. All observations contained 
+                herein have been considered active, recent and ongoing. This document is 
+                not supposed to be shared, reproduced beyond the duration of the current 
+                session.
+            </p>
+
+            <p class="doc-para">
+                Access to this file has been logged. The duration of your engagement with this 
+                document is being recorded. Scroll behavior, idle periods, and return visits are 
+                noted automatically and without exception.
+            </p>
 
             {#each paragraphs as p (p.id)}
                 <p class="doc-para" class:wrong={escalation >= 3}  class:tilt={escalation>=4}>
