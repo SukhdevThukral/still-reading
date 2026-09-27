@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { before } from 'node:test';
-
     import {onMount} from 'svelte';
 
     let escalation = $state(0);
@@ -63,6 +61,14 @@
             wasmState = new wasm.DocumentState(isReturning);
             if (isReturning) escalation = 1;
 
+            const fullText = `This document was filed on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.`;
+            let i = 0;
+            const typewriter = setInterval(() => {
+                landingText = fullText.slice(0, i);
+                i++;
+                if (i> fullText.length) clearInterval(typewriter);
+            }, 40);
+            
             const updateTime = () => {
                 currentTime = new Date().toLocaleTimeString();
             };
@@ -230,7 +236,7 @@
         transition: background 3s;
     }
 
-    .page.escalted {
+    .page.escalated {
         background: #0a0a0a;
     }
 
@@ -337,7 +343,7 @@
 
     .divider {
         border: none;
-        border-top: 1px soild #aaa;
+        border-top: 1px solid #aaa;
         margin: 24px 0;
     }
 
