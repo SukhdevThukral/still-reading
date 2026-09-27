@@ -104,15 +104,22 @@
 
         <div class="doc-page">
             <div class="doc-header">
-                <div class="seal-slot">
-                    <div class="seal-placeholder">D.U.C</div>
-                </div>
-                <div class="agency-name">DEPARTMENT OF UNRESOLVED CASES</div>
-                <div class="form-number">FORM 17-C - ACTIVE SURVEILLANCE REPORT</div>
-                <div class="case-meta">
-                    <span>CASE NO: DUC-2024-∞ </span>
-                    <span>STATUS: {escalation < 3 ? 'ACTIVE' : 'ESCALATED'}</span>
-                    <span>FILED: {currentTime}</span>
+                <div class="header-top">
+                    <div class="seal-slot">
+                        <div class="seal-placeholder">D.U.C</div>
+                    </div>
+                    <div class="agency-name">DEPARTMENT OF UNRESOLVED CASES</div>
+                    <div class="form-number">FORM 17-C - ACTIVE SURVEILLANCE REPORT</div>
+                    <div class="agency-address">
+                        Bureau of Missing of Missing & Displaced Persons<br/>
+                        P.O. Box ████, [REDACTED], DC 000∞<br/>
+                        Tel: ███-████ • Ref: DUC/17-C/∞
+                    </div>
+                    <div class="case-meta">
+                        <span>CASE NO: DUC-2024-∞ </span>
+                        <span>STATUS: {escalation < 3 ? 'ACTIVE' : 'ESCALATED'}</span>
+                        <span>FILED: {currentTime}</span>
+                    </div>
                 </div>
             </div>
             <div class="fields">
