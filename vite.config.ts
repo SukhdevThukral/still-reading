@@ -13,6 +13,11 @@ export default defineConfig({
 			adapter: adapter()
 		})
 	],
+	server: {
+		fs: {
+			allow: ['..']
+		}
+	},
 	optimizeDeps: {
 		exclude: ['wasm-core']
 	}
