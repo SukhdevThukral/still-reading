@@ -54,12 +54,6 @@
         let idleTick: ReturnType<typeof setInterval>;
 
         const init = async () => {
-            isReturning = !!localStorage.getItem('still-reading-visited');
-            localStorage.setItem('still-reading-visited', 'true')
-
-            const wasm = await import('wasm-core');
-            wasmState = new wasm.DocumentState(isReturning);
-            if (isReturning) escalation = 1;
 
             const fullText = `This document was filed on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.`;
             let i = 0;
@@ -69,15 +63,22 @@
                 if (i> fullText.length) clearInterval(typewriter);
             }, 40);
 
+            setTimeout(() => {
+                showLanding = false;
+            }, 3500)
+
+            isReturning = !!localStorage.getItem('still-reading-visited');
+            localStorage.setItem('still-reading-visited', 'true')
+
+            const wasm = await import('wasm-core');
+            wasmState = new wasm.DocumentState(isReturning);
+            if (isReturning) escalation = 1;
+
             const updateTime = () => {
                 currentTime = new Date().toLocaleTimeString();
             };
             updateTime();
-
-            setTimeout(() => {
-                showLanding = false;
-            }, 3000)
-
+            
             idleTick = setInterval(() => {
                 if (wasmState) {
                     wasmState.tick_idle();
@@ -126,7 +127,7 @@
 
 {#if showLanding}
     <div class="landing">
-        <span class="typewriter">{landingText}<span class="cursor">|</span></span>
+        <span class="typewriter">{landingText}{#if landingText.length > 0}<span class="cursor">|</span>{/if}</span>
     </div>
 {/if}
 
