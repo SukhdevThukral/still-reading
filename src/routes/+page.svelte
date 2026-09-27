@@ -134,7 +134,7 @@
                 </div>
                 <div class="field-row">
                     <span class="field-label">CASE REFERENCE:</span>
-                    <span class="live">{timeOnPage}s and counting</span>
+                    <span>DUC-2024-∞</span>
                 </div>
                 <div class="field-row">
                     <span class="field-label">CLASSIFICATION:</span>
@@ -168,70 +168,129 @@
                 <span>DUC FORM 17-C • PAGE 1 OF 4</span>
                 <span>UNAUTHORIZED ACCESS PROHIBITED</span>
             </div>
+        </div>
 
-            <div class="page-break">
-                <span class="page-number">— 1 —</span>
-            </div>
+        <div class="page-break">
+            <span class="page-number">— 1 —</span>
+        </div>
 
-            <div class="doc-page">
-                <div class="section-title">SECTION 1 — SUBJECT IDENTIFICATION &amp; INITIAL ASSESSMENT</div>
+        <div class="doc-page">
+            <div class="section-title">SECTION 1 — SUBJECT IDENTIFICATION &amp; INITIAL ASSESSMENT</div>
 
-                <div class="fields">
-                    <div class="section-row">
-                        <span class="section-num">1.1</span>
-                        <span>Case Reference: DUC-2024-∞</span>
-                    </div>
-                    <div class="section-row">
-                        <span class="section-num">1.2</span>
-                        <span>Date of Filing: {new Date().toLocaleDateString()}</span>
-                    </div>
-                    <div class="section-row">
-                        <span class="section-num">1.3</span>
-                        <span>Filed By:
-                            <span class="redacted" class:revealed={escalation>=4}>[REDACTED]</span>
-                        </span>
-                    </div>
-                    <div class="section-row">
-                        <span class="section-num">1.4</span>
-                        <span>Subject Status: {escalation < 2 ? 'UNRESOLVED':'ACTIVE - CURRENTLY READING'}</span>
-                    </div>
-                    <div class="section-row">
-                        <span class="section-num">1.5</span>
-                        <span>Time Since Access: {timeOnPage} seconds</span>
-                    </div>
+            <div class="fields">
+                <div class="section-row">
+                    <span class="section-num">1.1</span>
+                    <span>Case Reference: DUC-2024-∞</span>
                 </div>
-
-                <hr class="divider"/>
-
-                <div class="section-title">SECTION 2 - BEHAVIORIAL OBSERVATIONS</div>
-
-                {#each paragraphs.filter(p => p.section === 2 ) as p (p.id)}
-                    <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
-                        {p.text}
-                    </p>
-                    {#if p.id === 'p2' && escalation>=3}
-                        <div class="annotation">— margin note: it hasnt looked away</div>
-                    {/if}
-                {/each}
-
-                <div class="doc-footer">
-                    <span>DUC FORM 17-C • PAGE 2 OF 4</span>
-                    <span>CASE  NO: DUC-2024-∞</span>
+                <div class="section-row">
+                    <span class="section-num">1.2</span>
+                    <span>Date of Filing: {new Date().toLocaleDateString()}</span>
+                </div>
+                <div class="section-row">
+                    <span class="section-num">1.3</span>
+                    <span>Filed By:
+                        <span class="redacted" class:revealed={escalation>=4}>[REDACTED]</span>
+                    </span>
+                </div>
+                <div class="section-row">
+                    <span class="section-num">1.4</span>
+                    <span>Subject Status: {escalation < 2 ? 'UNRESOLVED':'ACTIVE - CURRENTLY READING'}</span>
+                </div>
+                <div class="section-row">
+                    <span class="section-num">1.5</span>
+                    <span>Time Since Access: {timeOnPage} seconds</span>
                 </div>
             </div>
 
-            <div class="page-break">
-                <span class="page-number">— 2 —</span>
+            <hr class="divider"/>
+
+            <div class="section-title">SECTION 2 - BEHAVIORIAL OBSERVATIONS</div>
+
+            {#each paragraphs.filter(p => p.section === 2 ) as p (p.id)}
+                <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
+                    {p.text}
+                </p>
+                {#if p.id === 'p2' && escalation>=3}
+                    <div class="annotation">— margin note: it hasnt looked away</div>
+                {/if}
+            {/each}
+
+            <div class="doc-footer">
+                <span>DUC FORM 17-C • PAGE 2 OF 4</span>
+                <span>CASE  NO: DUC-2024-∞</span>
+            </div>
+        </div>
+
+        <div class="page-break">
+            <span class="page-number">— 2 —</span>
+        </div>
+
+        <div class="doc-page">
+            <div class="section-title">SECTION 3 - FIELD NOTES &amp; REAL-TIME UPDATES</div>
+
+            {#each paragraphs.filter(p => p.section === 3) as p(p.id)}
+                <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
+                    {p.text}
+                </p>
+            {/each}
+
+            {#if idleSeconds >= 5 && escalation >= 3}
+                <div class="update-stamp">
+                    ▸ UPDATE {currentTime}: THE SUBJECT HAS NOT MOVED.
+                </div>
+            {/if}
+
+            {#if idleSeconds>= 15 && escalation >= 4}
+                <div class="update-stamp warning">
+                    ▸ UPDATE {currentTime}: THE SUBJECT IS  STILL THERE. DO NOT LET IT KNOW YOU HAVE READ THIS.
+                </div>
+            {/if}
+
+            <div class="doc-footer">
+                <span>DUC FORM 17-C • PAGE 3 OF 4</span>
+                <span>CASE NO: DUC-2024-∞</span>
+            </div>
+        </div>
+        
+        <div class="page-break">
+            <span class="page-number">— 3 —</span>
+        </div>
+
+        <div class="doc-page">
+            <div class="section-title">SECTION 4 - RECOMMENDATIONS &amp; CLASSIFICATION</div>
+
+            {#each paragraphs.filter(p => p.section === 4) as p (p.id)}
+                <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation>=4}>
+                    {p.text}
+                </p>
+            {/each}
+
+            {#if escalation >=5}
+                <div class="final-line">
+                    THIS DOCUMENT WILL NOT CLOSE.
+                </div>
+            {/if}
+
+            <hr class="divider"/>
+
+            <div class="fields">
+                <div class="section-row">
+                    <span class="section-num">4.1</span>
+                    <span>DO NOT FILE</span>
+                </div>
+                <div class="section-row">
+                    <span class="section-num">4.2</span>
+                    <span>DO NOT DISTRIBUTE</span>
+                </div>
+                <div class="section-row">
+                    <span class="section-num">4.3</span>
+                    <span>DO NOT RETURN</span>
+                </div>
             </div>
 
-            <div class="doc-page">
-                <div class="section-title">SECTION 3 - FIELD NOTES &amp; REAL-TIME UPDATES</div>
-
-                {#each paragraphs.filter(p => p.section === 3) as p(p.id)}
-                    <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
-                        {p.text}
-                    </p>
-                {/each}
+            <div class="doc-footer">
+                <span>DUC FORM 17-C • PAGE 4 OF 4</span>
+                <span>QUI LEGIT SCIT</span>
             </div>
         </div>
     </main>
