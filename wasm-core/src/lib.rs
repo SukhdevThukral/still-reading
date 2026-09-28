@@ -17,9 +17,12 @@ impl DocumentState {
     }
 
     pub fn update_scroll(&mut self, depth: f64, scrolled_up: bool) {
-        self.scroll_depth = depth;
+        if !depth.is_finite() {
+            return;
+        }
+        self.scroll_depth = depth.clamp(0.0, 1.0);
         if scrolled_up {
-            self.times_scrolled_up += 1
+            self.times_scrolled_up += 1;
         }
         self.recalculate_escalation();
     }
@@ -59,5 +62,56 @@ impl DocumentState {
 
     pub fn get_escalation(&self) -> u32 {
         self.escalation_level
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    fn starts_at_zero() {
+        assert_eq!(DocumentState::new(false).get_escalation(), 0);
+    }
+
+    #[test]
+    fn returning_visitor_starts_at_one() {
+        let mut s = DocumentState::new(true);
+        s.tick_idle();
+        assert_eq!(s.get_escalation(), 1);
+    }
+
+    #[test]
+    fn threshold_ladder() {
+        let mut s = DocumentState::new(false);
+        s.update_scroll(0.3, false);
+        assert_eq!(s.get_escalation(), 1);
+        s.update_scroll(0.4, true);
+        assert_eq!(s.get_escalation(), 2);
+        s.update_scroll(0.75, false);
+        assert_eq!(s.get_escalation(), 3);
+        s.update_scroll(0.9, false);
+        assert_eq!(s.get_escalation(), 4);
+        for _ in 0..10 {
+            s.tick_idle();
+        }
+        assert_eq!(s.get_escalation(), 5);
+    }
+
+    #[test]
+    fn nan_depth_is_ignored() {
+        let mut s = DocumentState::new(false);
+        s.update_scroll(f64::NAN, true);
+        assert_eq!(s.get_escalation(), 0);
+        assert_eq!(s.times_scrolled_up, 0);
+    }
+
+    #[test]
+    fn escalation_never_decreases() {
+        let mut s = DocumentState::new(false);
+        s.update_scroll(0.9, false);
+        s.update_scroll(0.1, false);
+        assert_eq!(s.get_escalation(), 4);
     }
 }
