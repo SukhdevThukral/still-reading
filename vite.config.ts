@@ -15,7 +15,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'wasm-core' : '/src/lib/wasm-core/wasm_core.js'
+			'wasm-core' : '/wasm-core/pkg/wasm_core.js'
 		}
 	},
 	server: {
