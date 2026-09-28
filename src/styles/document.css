@@ -280,14 +280,14 @@ html, body {
 .jumpscare-flash.f1 {
     background-size: 8%; animation: scarePulse 0.18s steps(1) forwards;
 }
-.jumpscare-flash.f1 {
+.jumpscare-flash.f2 {
     background-size: 28%; animation: scarePulse 0.22s steps(1) forwards;
 }
-.jumpscare-flash.f1 {
+.jumpscare-flash.f3 {
     background-size: 65%; animation: scarePulse 0.18s steps(1) forwards;
 }
-.jumpscare-flash.f1 {
-    background-size: 220%; animation: scareFinal 1.8s ease-out forwards;
+.jumpscare-flash.f4 {
+    background-size: contain; animation: scareFinal 1.8s ease-out forwards;
 }
 
 @keyframes scarePulse {
@@ -296,9 +296,9 @@ html, body {
 }
 
 @keyframes scareFinal {
-    0% {opacity: 1; background-size: 220%;}
-    30% {opacity: 1; background-size: 240%;}
-    100% {opacity: 0; background-size: 260%;}
+    0% {opacity: 1; transform: scale(1);}
+    30% {opacity: 1; transform: scale(1.05);}
+    100% {opacity: 0; transform: scale(1.1);}
 }
 
 .enter-btn {
