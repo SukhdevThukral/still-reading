@@ -7,6 +7,16 @@
     const ORIGINAL_TITLE = 'DEPARTMENT OF UNRESOLVED CASES';
     const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
     const SCROLL_UP_THRESHOLD = 150;
+    const SCARE_STEPS: [number, boolean, number][] = [
+        [0, true, 0],
+        [400, false, 1], [580, false, 0],
+        [600, true, 0],
+        [780, false, 2], [1000, false, 0],
+        [1060, true, 0],
+        [1160, false, 3], [1340, false, 0],
+        [1400, true, 0],
+        [1500, false, 4], [3300, false, 0],
+    ];
 
     let escalation = $state(0);
     let idleSeconds = $state(0);
@@ -81,18 +91,21 @@
         if (escalation < 5 || reducedMotion || scareFired) return;
         const id = setTimeout(() => {
             scareFired = true;
-            blackout = true;
-            later(() => { blackout = false; jumpscareFlash = 1}, 400);
-            later(() => {jumpscareFlash = 0;}, 580);
-            later(() => {blackout = true;}, 600);
-            later(() => {blackout = false; jumpscareFlash = 2;}, 780);
-            later(() => {jumpscareFlash = 0;}, 1000);
-            later(() => {blackout=true;}, 1060);
-            later(() => {blackout = false; jumpscareFlash = 3;}, 1160);
-            later(() => {jumpscareFlash = 0}, 1340);
-            later(() => {blackout = true}, 1400);
-            later(() => {blackout = false; jumpscareFlash = 4;}, 1500);
-            later(() => {jumpscareFlash = 0;}, 3300);
+            for (const[ms, dark, flash] of SCARE_STEPS) {
+                later(() => {blackout=dark; jumpscareFlash = flash;}, ms);
+            }
+            // blackout = true;
+            // later(() => { blackout = false; jumpscareFlash = 1}, 400);
+            // later(() => {jumpscareFlash = 0;}, 580);
+            // later(() => {blackout = true;}, 600);
+            // later(() => {blackout = false; jumpscareFlash = 2;}, 780);
+            // later(() => {jumpscareFlash = 0;}, 1000);
+            // later(() => {blackout=true;}, 1060);
+            // later(() => {blackout = false; jumpscareFlash = 3;}, 1160);
+            // later(() => {jumpscareFlash = 0}, 1340);
+            // later(() => {blackout = true}, 1400);
+            // later(() => {blackout = false; jumpscareFlash = 4;}, 1500);
+            // later(() => {jumpscareFlash = 0;}, 3300);
         }, 4000 + Math.random() * 8000);
         return() => clearTimeout(id);
     });
@@ -148,7 +161,7 @@
         reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         try {
-            isReturning = !localStorage.getItem('still-reading-visited');
+            isReturning = localStorage.getItem('still-reading-visited') !== null;
             localStorage.setItem('still-reading-visited', 'true');
         } catch {
             //storage blocked (priv mode etc.): treat as first visit
@@ -358,7 +371,7 @@
 
             <hr class="divider"/>
 
-            <div class="section-title">SECTION 2 - BEHAVIORIAL OBSERVATIONS</div>
+            <div class="section-title">SECTION 2 - BEHAVIORAL OBSERVATIONS</div>
 
             {#each paragraphs.filter(p => p.section === 2 ) as p (p.id)}
                 <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
