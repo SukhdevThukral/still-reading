@@ -2,67 +2,154 @@
     import {onMount} from 'svelte';
     import {getParagraphs} from '$lib/document'
     import '../styles/document.css';
-
+	import { title } from 'process';
+    const ORIGINAL_TITLE = 'DEPARTMENT OF UNRESOLVED CASES';
+    const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
     let escalation = $state(0);
     let idleSeconds = $state(0);
-    let lastScrollY = $state(0);
     let isReturning = $state(false);
     let currentTime = $state(new Date().toLocaleTimeString());
     let timeOnPage = $state(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let wasmState: any = $state(null);
+    let wasmState = $state<any>(null);
     let showLanding = $state(true);
+    let landingStage = $state<'warning' | 'typing'>('warning');
     let landingText = $state('');
+    let reducedMotion = $state(false);
     let glitching = $state(false);
     let blackout = $state(false);
-    let titleScramble = $state('DEPARTMENT OF UNRESOLVED CASES');
+    let titleScramble = $state(ORIGINAL_TITLE);
     let ghostCursorX = $state(0);
     let ghostCursorY = $state(0);
     let showGhostCursor = $state(false);
+    let showJumpscare = $state(false);
 
     const paragraphs = $derived(getParagraphs(escalation, currentTime, timeOnPage));
 
     let prevEscalation = 0;
-    let glitchInterval: ReturnType<typeof setInterval> | undefined;
+    let scareFired = false;
+    let typewriterId: ReturnType<typeof setInterval> | undefined;
+    
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const later = (fn: () => void, ms: number) => {
+        const id = setTimeout(() => {
+            timers.delete(id);
+            fn();
+        }, ms);
+        timers.add(id);
+    }
+
+    const pulseGlitch = () => {
+        if (reducedMotion) return;
+        glitching =true;
+        later(() => {glitching = false}, 400);
+    };
+
+    const begin = (reduce: boolean) => {
+        if (landingStage !== 'warning') return;
+        if (reduce) reducedMotion = true;
+        landingStage = 'typing';
+
+        const fullText = `This document was filed on ${new Date().toLocaleDateString()} at  ${new Date().toLocaleTimeString()}`;
+
+        let i = 0;
+        typewriterId = setInterval(() => {
+            landingText = fullText.slice(0, i);
+            i++;
+            if (i > fullText.length) clearInterval(typewriterId);
+        }, 40);
+        later(() => {showLanding = false;}, 3500);
+    };
 
     $effect(() => {
-        if (escalation > prevEscalation && escalation > 0) {
-            glitching = true;
+        if (escalation > prevEscalation ) {
             prevEscalation = escalation;
-            setTimeout(() => {glitching=false;}, 400)
-        }
-
-        if (escalation >= 5){
-            if (!glitchInterval) {
-                glitchInterval = setInterval(() => {
-                    glitching = true;
-                    setTimeout(() => {glitching = false;}, 300);
-                    blackout = true;
-                    setTimeout(() => {blackout = false;}, 800)
-                }, 2000);
-            }
-        }
-
-        if (escalation >= 3) {
-            const chars = 'ABCDEFGHIJKLMNOPQRTUVWXYZ█▓▒░';
-            const original = 'DEPARTMENT OF UNRESOLVED CASES';
-            let iterations = 0;
-            const scramble = setInterval(() => {
-                titleScramble = original.split('').map((char, i) => {
-                    if (char === '') return ' ';
-                    if (i < iterations) {
-                        return original[i];
-                    }
-                    return chars[Math.floor(Math.random() * chars.length)];
-                }).join('');
-                iterations += 1;
-                if (iterations > original.length) {
-                    clearInterval(scramble);
-                    titleScramble = original;
-                }
-            }, 40)
+            pulseGlitch();
         }
     });
+
+    $effect(() => {
+        if (escalation < 5 || reducedMotion ) return;
+        const id = setInterval(pulseGlitch, 7000);
+        return () => clearInterval(id);
+    });
+
+    $effect(() => {
+        if (escalation < 5 || reducedMotion || scareFired) return;
+        const id = setTimeout(() => {
+            scareFired = true;
+            blackout = true;
+            later(() => {
+                blackout = false;
+                showJumpscare = true;
+                later(() => {showJumpscare = false;}, 120);
+            }, 400);
+        }, 4000 + Math.random() * 8000);
+        return() => clearTimeout(id);
+    });
+
+    $effect(() => {
+        if (escalation < 3 || reducedMotion) return;
+        let iterations = 0;
+        const id = setInterval(() => {
+            titleScramble = ORIGINAL_TITLE.split('').map((char, i) => {
+                if (char === ' ') return ' ';
+                if (i < iterations) return char;
+                return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+            }).join('');
+            iterations += 1;
+            if (iterations > ORIGINAL_TITLE.length) {
+                clearInterval(id);
+                titleScramble = ORIGINAL_TITLE;
+            }
+        }, 40)
+        return () => {
+            clearInterval(id);
+            titleScramble = ORIGINAL_TITLE;
+        };
+    });
+
+    
+
+
+        // if (escalation >= 5){
+        //     if (!glitchInterval) {
+        //         glitchInterval = setInterval(() => {
+        //             glitching = true;
+        //             setTimeout(() => {glitching = false;}, 300);
+
+        //             blackout = true;
+        //             setTimeout(() => {
+        //                 blackout = false;
+        //                 showJumpscare = true;
+        //                 setTimeout(() => {
+        //                     showJumpscare = false;
+        //                 }, 120)
+        //             }, 400)
+        //         }, 2000);
+        //     }
+        // }
+
+        // if (escalation >= 3) {
+        //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
+        //     const original = 'DEPARTMENT OF UNRESOLVED CASES';
+        //     let iterations = 0;
+        //     const scramble = setInterval(() => {
+        //         titleScramble = original.split('').map((char, i) => {
+        //             if (char === ' ') return ' ';
+        //             if (i < iterations) {
+        //                 return original[i];
+        //             }
+        //             return chars[Math.floor(Math.random() * chars.length)];
+        //         }).join('');
+        //         iterations += 1;
+        //         if (iterations > original.length) {
+        //             clearInterval(scramble);
+        //             titleScramble = original;
+        //         }
+        //     }, 40)
+        // }
+
 
     $effect(() => {
         const tick = setInterval(() => {
@@ -150,15 +237,24 @@
 {/if}
 
 
-
 {#if !showLanding}
+
     <div class="debug">
         ESC: {escalation} | IDLE: {idleSeconds}s
     </div>
+
     {#if showGhostCursor && escalation >= 4}
         <div class="ghost-cursor" style="left: {ghostCursorX}px; top: {ghostCursorY}px;"></div>
     {/if}
-    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching} class:blackout={blackout}>
+
+    {#if blackout}
+        <div class="blackout-overlay"></div>
+    {/if}
+
+    {#if showJumpscare}
+        <div class="jumpscare"></div>
+    {/if}
+    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching}>
         <div class="doc-page">
             <div class="doc-header">
                 <div class="header-top">
@@ -294,7 +390,7 @@
         <div class="doc-page">
             <div class="section-title">SECTION 3 - FIELD NOTES &amp; REAL-TIME UPDATES</div>
 
-            {#each paragraphs.filter(p => p.section === 3) as p(p.id)}
+            {#each paragraphs.filter(p => p.section === 3) as p (p.id)}
                 <p class="doc-para" class:wrong={escalation>=3} class:tilt={escalation >= 4}>
                     {p.text}
                 </p>
