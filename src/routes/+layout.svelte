@@ -1,7 +1,4 @@
-<script module>
-	export const prerender = true;
-	export const ssr = false;
-</script>
+
 
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
