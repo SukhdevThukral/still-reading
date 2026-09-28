@@ -139,7 +139,7 @@
         let idleTick: ReturnType<typeof setInterval> | undefined;
         let localMax = 0;
 
-        reducedMotion = window.matchMedia('(prefers=reduced-motion: reduce)').matches;
+        reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         try {
             isReturning = !localStorage.getItem('still-reading-visited');
