@@ -1,10 +1,12 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
+    import { onMount} from 'svelte';
     import {getParagraphs} from '$lib/document'
     import '../styles/document.css';
-	import { title } from 'process';
+
     const ORIGINAL_TITLE = 'DEPARTMENT OF UNRESOLVED CASES';
     const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
+    const SCROLL_UP_THRESHOLD = 150;
+
     let escalation = $state(0);
     let idleSeconds = $state(0);
     let isReturning = $state(false);
@@ -109,123 +111,89 @@
         };
     });
 
-    
-
-
-        // if (escalation >= 5){
-        //     if (!glitchInterval) {
-        //         glitchInterval = setInterval(() => {
-        //             glitching = true;
-        //             setTimeout(() => {glitching = false;}, 300);
-
-        //             blackout = true;
-        //             setTimeout(() => {
-        //                 blackout = false;
-        //                 showJumpscare = true;
-        //                 setTimeout(() => {
-        //                     showJumpscare = false;
-        //                 }, 120)
-        //             }, 400)
-        //         }, 2000);
-        //     }
-        // }
-
-        // if (escalation >= 3) {
-        //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
-        //     const original = 'DEPARTMENT OF UNRESOLVED CASES';
-        //     let iterations = 0;
-        //     const scramble = setInterval(() => {
-        //         titleScramble = original.split('').map((char, i) => {
-        //             if (char === ' ') return ' ';
-        //             if (i < iterations) {
-        //                 return original[i];
-        //             }
-        //             return chars[Math.floor(Math.random() * chars.length)];
-        //         }).join('');
-        //         iterations += 1;
-        //         if (iterations > original.length) {
-        //             clearInterval(scramble);
-        //             titleScramble = original;
-        //         }
-        //     }, 40)
-        // }
-
+    $effect(() => {
+        if (escalation < 4 || reducedMotion) {
+            showGhostCursor = false;
+            return;
+        }
+        const id = setInterval(() => {
+            showGhostCursor = true;
+            ghostCursorX = Math.random() * window.innerWidth;
+            ghostCursorY = Math.random() * window.innerHeight;
+        }, 3000);
+        return () => clearInterval(id);
+    });
 
     $effect(() => {
-        const tick = setInterval(() => {
+        const tick  = setInterval(() => {
             currentTime = new Date().toLocaleTimeString();
             timeOnPage += 1;
         }, 1000);
-        return () => clearInterval(tick);
+        return() => clearInterval(tick);
     });
 
     onMount(() => {
-        let idleTick: ReturnType<typeof setInterval>;
 
-        const init = async () => {
+        let destroyed = false;
+        let idleTick: ReturnType<typeof setInterval> | undefined;
+        let localMax = 0;
 
-            const fullText = `This document was filed on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}.`;
-            let i = 0;
-            const typewriter = setInterval(() => {
-                landingText = fullText.slice(0, i);
-                i++;
-                if (i> fullText.length) clearInterval(typewriter);
-            }, 40);
+        reducedMotion = window.matchMedia('(prefers=reduced-motion: reduce)').matches;
 
-            setTimeout(() => {
-                showLanding = false;
-            }, 3500)
+        try {
+            isReturning = !localStorage.getItem('still-reading-visited');
+            localStorage.setItem('still-reading-visited', 'true');
+        } catch {
+            //storage blocked (priv mode etc.): treat as first visit
+        }
 
-            isReturning = !!localStorage.getItem('still-reading-visited');
-            localStorage.setItem('still-reading-visited', 'true')
-
+        (async () => {
             const wasm = await import('wasm-core');
             await wasm.default();
+            if (destroyed) return;
+
             wasmState = new wasm.DocumentState(isReturning);
-            if (isReturning) escalation = 1;
+            if(isReturning) escalation = 1;
 
             idleTick = setInterval(() => {
-                if (wasmState) {
-                    wasmState.tick_idle();
-                    idleSeconds = wasmState.idle_seconds;
-                    escalation = wasmState.get_escalation();
-                }
-            }, 1000);            
-        };
+                if (!wasmState) return;
+                wasmState.tick_idle();
+                idleSeconds = wasmState.idle_seconds;
+                escalation = wasmState.get_escalation();
+            }, 1000);
+        })();
 
         const handleScroll = () => {
             if (!wasmState) return;
-            const scrolled  = window.scrollY;
+            const y  = window.scrollY;
             const total = document.body.scrollHeight - window.innerHeight;
-            const depth = scrolled / total;
-            const scrolledUp = scrolled < lastScrollY;
-            lastScrollY = scrolled;
+            const depth = total > 0 ? Math.min(1, Math.max(0, y / total)): 0;
+
+            let scrolledUp = false;
+            if (y > localMax) {
+                localMax = y;
+            } else if (localMax - y > SCROLL_UP_THRESHOLD) {
+                scrolledUp = true;
+                localMax = y;
+            }
+            
             wasmState.update_scroll(depth, scrolledUp);
             wasmState.reset_idle();
             idleSeconds =  0;
             escalation = wasmState.get_escalation();
         };
 
-        const handleMouseMove = () => {
-        };
-
-        setInterval(() => {
-            if (escalation >= 4) {
-                showGhostCursor = true;
-                ghostCursorX = Math.random() * window.innerWidth;
-                ghostCursorY = Math.random() * window.innerHeight;
-            }
-        }, 3000)
-
-        init();
-
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('scroll', handleScroll, {passive: true});
 
         return () => {
+            destroyed = true;
             clearInterval(idleTick);
+            clearInterval(typewriterId);
+            timers.forEach(clearTimeout);
+            timers.clear();
             window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('mousemove', handleMouseMove);
+            wasmState?.free();
+            wasmState = null;
         };
     });
 </script>
