@@ -2,6 +2,7 @@
     import { onMount} from 'svelte';
     import {getParagraphs} from '$lib/document'
     import '../styles/document.css';
+    import {SvelteSet} from 'svelte/reactivity';
 
     const ORIGINAL_TITLE = 'DEPARTMENT OF UNRESOLVED CASES';
     const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ█▓▒░';
@@ -32,7 +33,7 @@
     let scareFired = false;
     let typewriterId: ReturnType<typeof setInterval> | undefined;
     
-    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const timers = new SvelteSet<ReturnType<typeof setTimeout>>();
     const later = (fn: () => void, ms: number) => {
         const id = setTimeout(() => {
             timers.delete(id);
@@ -250,7 +251,7 @@
                         <div class="agency-name">{titleScramble}</div>
                         <div class="form-number">FORM 17-C - ACTIVE SURVEILLANCE REPORT</div>
                         <div class="agency-address">
-                            Bureau of Missing of Missing & Displaced Persons<br/>
+                            Bureau of Missing & Displaced Persons<br/>
                             P.O. Box ████, [REDACTED], DC 000∞<br/>
                             Tel: ███-████ • Ref: DUC/17-C/∞
                         </div>
