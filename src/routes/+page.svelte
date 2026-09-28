@@ -5,11 +5,11 @@
 
     let escalation = $state(0);
     let idleSeconds = $state(0);
-    let timesScrolledUp = $state(0);
     let lastScrollY = $state(0);
     let isReturning = $state(false);
     let currentTime = $state(new Date().toLocaleTimeString());
     let timeOnPage = $state(0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let wasmState: any = $state(null);
     let showLanding = $state(true);
     let landingText = $state('');
@@ -64,7 +64,6 @@
             const total = document.body.scrollHeight - window.innerHeight;
             const depth = scrolled / total;
             const scrolledUp = scrolled < lastScrollY;
-            if (scrolledUp) timesScrolledUp += 1;
             lastScrollY = scrolled;
             wasmState.update_scroll(depth, scrolledUp);
             wasmState.reset_idle();
@@ -73,10 +72,6 @@
         };
 
         const handleMouseMove = () => {
-            if (wasmState) {
-                wasmState.reset_idle();
-                idleSeconds = 0;
-            }
         };
 
         init();
@@ -98,7 +93,12 @@
     </div>
 {/if}
 
+
+
 {#if !showLanding}
+    <div class="debug">
+        ESC: {escalation} | IDLE: {idleSeconds}s
+    </div>
     <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5}>
 
 
