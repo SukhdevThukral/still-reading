@@ -25,7 +25,7 @@
     let ghostCursorX = $state(0);
     let ghostCursorY = $state(0);
     let showGhostCursor = $state(false);
-    let showJumpscare = $state(false);
+    let jumpscareFlash = $state(0);
 
     const paragraphs = $derived(getParagraphs(escalation, currentTime, timeOnPage));
 
@@ -73,7 +73,7 @@
 
     $effect(() => {
         if (escalation < 5 || reducedMotion ) return;
-        const id = setInterval(pulseGlitch, 7000);
+        const id = setInterval(pulseGlitch, 2000);
         return () => clearInterval(id);
     });
 
@@ -82,11 +82,17 @@
         const id = setTimeout(() => {
             scareFired = true;
             blackout = true;
-            later(() => {
-                blackout = false;
-                showJumpscare = true;
-                later(() => {showJumpscare = false;}, 120);
-            }, 400);
+            later(() => { blackout = false; jumpscareFlash = 1}, 400);
+            later(() => {jumpscareFlash = 0;}, 580);
+            later(() => {blackout = true;}, 600);
+            later(() => {blackout = false; jumpscareFlash = 2;}, 780);
+            later(() => {jumpscareFlash = 0;}, 1000);
+            later(() => {blackout=true;}, 1060);
+            later(() => {blackout = false; jumpscareFlash = 3;}, 1160);
+            later(() => {jumpscareFlash = 0}, 1340);
+            later(() => {blackout = true}, 1400);
+            later(() => {blackout = false; jumpscareFlash = 4;}, 1500);
+            later(() => {jumpscareFlash = 0;}, 3300);
         }, 4000 + Math.random() * 8000);
         return() => clearTimeout(id);
     });
@@ -236,8 +242,8 @@
         <div class="blackout-overlay"></div>
     {/if}
 
-    {#if showJumpscare}
-        <div class="jumpscare"></div>
+    {#if jumpscareFlash > 0}
+        <div class="jumpscare-flash f{jumpscareFlash}"></div>
     {/if}
 
     <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching} class:reduced={reducedMotion}>
