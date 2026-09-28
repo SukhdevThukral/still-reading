@@ -1,7 +1,8 @@
-:global(body) {
+:global(html, body) {
     margin: 0;
-    background: #111;
-    font-family: 'Courier New', Courier, monospace;
+    padding: 0;
+    background: #1a1a1a;
+    overflow-x: hidden;
 }
 
 .landing {
@@ -37,7 +38,7 @@
     align-items: center;
     padding: 60px 40px;
     transition: background 3s;
-    background: #2a2a2a;
+    background: #1a1a1a;
     width: 100%;
     box-sizing: border-box;
     gap: 32px;
@@ -64,6 +65,10 @@
 
 .page.escalated {
     background: #0a0a0a;
+}
+
+.page.blackout {
+    animation: blackoutFlash 0.8s steps(1) forwards;
 }
 
 .seal-img{
@@ -239,6 +244,22 @@
     animation: fadeIn 3s ease-in;
 }
 
+.page.glitch {
+    animation: glitchFlash 0.4s steps(1) forwards;
+}
+
+.ghost-cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(139, 0, 0, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 998;
+    transition: all 2s ease;
+    animation: ghostPulse 1s infinite;
+}
+
 .doc-footer {
     display: flex;
     justify-content: space-between;
@@ -253,6 +274,14 @@
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
+}
+
+@keyframes blackoutFlash {
+    0%, 100% {filter: brightness(1);}
+    20% {filter: brightness(0);}
+    40% {filter: brightness(1);}
+    60% {filter: brightness(0);}
+    80% {filter: brightness(0.2);}
 }
 
 @keyframes shake {
@@ -274,6 +303,24 @@
     z-index: 999;
     font-family: monospace;
     letter-spacing: 0.05em;
+}
+
+@keyframes glitchFlash {
+    0% {filter: invert(0) brightness(1);}
+    15% {filter: invert(1) brightness(2);}
+    20% {filter: invert(0) brightness(1);}
+    35% {filter: invert(1) brightness(1.5) hue-rotate(90deg);}
+    40% {filter: invert(0) brightness(1);}
+    55% {filter: brightness(0);}
+    60% { filter: brightness(1);}
+    75% {filter: invert(1) brightness(2) hue-rotate(180deg);}
+    80% {filter: invert(0) brightness(1);}
+    100% {filter: invert(0) brightness(1);}
+}
+
+@keyframes ghostPulse {
+    0%, 100% {opacity: 0.3; transform: scale(1);}
+    50% {opacity: 0.8; transform: scale(1.5);}
 }
 
 @keyframes blink {
