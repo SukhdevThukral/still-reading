@@ -13,6 +13,11 @@ export default defineConfig({
 			adapter: adapter()
 		})
 	],
+	resolve: {
+		alias: {
+			'wasm-core' : '/src/lib/wasm-core/wasm_core.js'
+		}
+	},
 	server: {
 		fs: {
 			allow: ['..']
