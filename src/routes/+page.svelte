@@ -200,16 +200,32 @@
 
 {#if showLanding}
     <div class="landing">
-        <span class="typewriter">{landingText}{#if landingText.length > 0}<span class="cursor">|</span>{/if}</span>
+        {#if landingStage === 'warning'}
+            <div class="warning-box" role="alertdialog" aria-labelledby="cw-title">
+                <p id="cw-title" class="warning-title">CONTENT WARNING</p>
+                <p>
+                    This experience contains flashing and sudden visual changes, unsettling text and one jump scare. IT MAY AFFECT PEOPLE WITH PHOTOSENSITIVE EPILEPSY.
+                </p>
+                <div class="warning-actions">
+                    <button class="enter-btn" onclick={() => begin(false)}>Continue</button>
+                    <button class="enter-btn" onclick={() => begin(true)}>Continue with reduced effects</button>
+                </div>
+            </div>
+        {:else}
+            <span class="typewriter">{landingText}{#if landingText.length > 0}<span class="cursor">|</span>{/if}</span>
+        {/if}
     </div>
 {/if}
 
 
 {#if !showLanding}
 
-    <div class="debug">
-        ESC: {escalation} | IDLE: {idleSeconds}s
-    </div>
+    {#if import.meta.env.DEV}
+        <div class="debug">
+            ESC: {escalation} | IDLE: {idleSeconds}s
+        </div>
+    {/if}
+
 
     {#if showGhostCursor && escalation >= 4}
         <div class="ghost-cursor" style="left: {ghostCursorX}px; top: {ghostCursorY}px;"></div>
@@ -222,7 +238,8 @@
     {#if showJumpscare}
         <div class="jumpscare"></div>
     {/if}
-    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching}>
+
+    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching} class:reduced={reducedMotion}>
         <div class="doc-page">
             <div class="doc-header">
                 <div class="header-top">
