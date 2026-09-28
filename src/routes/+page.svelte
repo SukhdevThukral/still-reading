@@ -13,8 +13,56 @@
     let wasmState: any = $state(null);
     let showLanding = $state(true);
     let landingText = $state('');
+    let glitching = $state(false);
+    let blackout = $state(false);
+    let titleScramble = $state('DEPARTMENT OF UNRESOLVED CASES');
+    let ghostCursorX = $state(0);
+    let ghostCursorY = $state(0);
+    let showGhostCursor = $state(false);
 
     const paragraphs = $derived(getParagraphs(escalation, currentTime, timeOnPage));
+
+    let prevEscalation = 0;
+    let glitchInterval: ReturnType<typeof setInterval> | undefined;
+
+    $effect(() => {
+        if (escalation > prevEscalation && escalation > 0) {
+            glitching = true;
+            prevEscalation = escalation;
+            setTimeout(() => {glitching=false;}, 400)
+        }
+
+        if (escalation >= 5){
+            if (!glitchInterval) {
+                glitchInterval = setInterval(() => {
+                    glitching = true;
+                    setTimeout(() => {glitching = false;}, 300);
+                    blackout = true;
+                    setTimeout(() => {blackout = false;}, 800)
+                }, 2000);
+            }
+        }
+
+        if (escalation >= 3) {
+            const chars = 'ABCDEFGHIJKLMNOPQRTUVWXYZ█▓▒░';
+            const original = 'DEPARTMENT OF UNRESOLVED CASES';
+            let iterations = 0;
+            const scramble = setInterval(() => {
+                titleScramble = original.split('').map((char, i) => {
+                    if (char === '') return ' ';
+                    if (i < iterations) {
+                        return original[i];
+                    }
+                    return chars[Math.floor(Math.random() * chars.length)];
+                }).join('');
+                iterations += 1;
+                if (iterations > original.length) {
+                    clearInterval(scramble);
+                    titleScramble = original;
+                }
+            }, 40)
+        }
+    });
 
     $effect(() => {
         const tick = setInterval(() => {
@@ -74,6 +122,14 @@
         const handleMouseMove = () => {
         };
 
+        setInterval(() => {
+            if (escalation >= 4) {
+                showGhostCursor = true;
+                ghostCursorX = Math.random() * window.innerWidth;
+                ghostCursorY = Math.random() * window.innerHeight;
+            }
+        }, 3000)
+
         init();
 
         window.addEventListener('scroll', handleScroll);
@@ -99,9 +155,10 @@
     <div class="debug">
         ESC: {escalation} | IDLE: {idleSeconds}s
     </div>
-    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5}>
-
-
+    {#if showGhostCursor && escalation >= 4}
+        <div class="ghost-cursor" style="left: {ghostCursorX}px; top: {ghostCursorY}px;"></div>
+    {/if}
+    <main class="page" class:escalated={escalation >= 3} class:corrupted={escalation >= 5} class:glitch={glitching} class:blackout={blackout}>
         <div class="doc-page">
             <div class="doc-header">
                 <div class="header-top">
@@ -109,7 +166,7 @@
                         <img src={escalation >= 4 ? '/assets/seal-corrupted.png' : '/assets/seal.png'} alt="D.U.C Seal" class="seal-img" class:corrupted-seal={escalation >= 4}/>
                     </div>
                     <div class="header-text">
-                        <div class="agency-name">DEPARTMENT OF UNRESOLVED CASES</div>
+                        <div class="agency-name">{titleScramble}</div>
                         <div class="form-number">FORM 17-C - ACTIVE SURVEILLANCE REPORT</div>
                         <div class="agency-address">
                             Bureau of Missing of Missing & Displaced Persons<br/>
