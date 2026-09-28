@@ -9,6 +9,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>still-██ading</title>
 </svelte:head>
 
 {@render children()}
