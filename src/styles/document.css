@@ -1,4 +1,4 @@
-:global(html, body) {
+html, body {
     margin: 0;
     padding: 0;
     background: #1a1a1a;
@@ -61,6 +61,7 @@
     left: 0;
     width: 6px;
     background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
+    pointer-events: none;
 }
 
 .page.escalated {
@@ -91,6 +92,8 @@
 .seal-slot {
     display: flex;
     justify-content: center;
+    flex-shrink: 0;
+    margin-top: 4px;
     margin-bottom: 12px;
 }
 
@@ -220,6 +223,30 @@
     color: #5c0000;
 }
 
+.warning-box {
+    max-width: 480px;
+    color: #aaa;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+}
+
+.warning-title {
+    color: #8b0000;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+}
+
+.warning-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
 .returning-note{
     background: #fff3cd;
     border: 1px solid #856404;
@@ -248,6 +275,22 @@
     z-index: 9999;
     pointer-events: none;
     filter: contrast(1.5) brightness(1);
+}
+
+.enter-btn {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #555;
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+}
+
+.enter-btn:hover, .enter-btn:focus-visible {
+    color: #fff;
+    border-color: #aaa;
 }
 
 .final-line {
@@ -322,16 +365,9 @@
 }
 
 @keyframes glitchFlash {
-    0% {filter: invert(0) brightness(1);}
-    15% {filter: invert(1) brightness(2);}
-    20% {filter: invert(0) brightness(1);}
-    35% {filter: invert(1) brightness(1.5) hue-rotate(90deg);}
-    40% {filter: invert(0) brightness(1);}
-    55% {filter: brightness(0);}
-    60% { filter: brightness(1);}
-    75% {filter: invert(1) brightness(2) hue-rotate(180deg);}
-    80% {filter: invert(0) brightness(1);}
-    100% {filter: invert(0) brightness(1);}
+    0%, 100% {filter: none; transform: translateX(0);}
+    30% {filter: hue-rotate(25deg) contrast(1.15); transform: translateX(-2px);}
+    65% {filter: brightness(0.9); transform: translateX(2px);}
 }
 
 @keyframes ghostPulse {
@@ -442,3 +478,20 @@
     flex-shrink: 0;
     margin-top: 4px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .page.corrupted, .page.glitch, .corrupted-seal, .ghost-cursor, .cursor,
+    .update-stamp, .final-line, .annotation {
+        animation: none;
+    }
+    .doc-para, .redacted, .seal-img, .page {transition: none;}
+    .doc-para.tilt {transform: none;}
+}
+
+.page.reduced.corrupted, .page.reduced.glitch, .page.reduced .corrupted-seal,
+.page.reduced .update-stamp, .page.reduced .final-line, .page.reduced .annotation {
+    animation: none;
+}
+
+.page.reduced .doc-para, .page.reduced .redacted {transition: none;}
+.page.reduced .doc-para.tilt {transform: none;}
