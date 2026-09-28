@@ -34,21 +34,27 @@ impl DocumentState {
     }
 
     fn recalculate_escalation(&mut self) {
-        self.escalation_level = match (
-            self.scroll_depth,
-            self.times_scrolled_up,
-            self.idle_seconds,
-            self.is_returning,
-        ) {
-            (_, _, _, true) => self.escalation_level.max(1),
-            (d, _, _, _) if d > 0.3 => self.escalation_level.max(1),
-            (_,u, _, _) if u >= 1 => self.escalation_level.max(2),
-            (d, _, _, _) if d > 0.6 => self.escalation_level.max(2),
-            (_, _, i, _) if i >= 5 => self.escalation_level.max(3),
-            (d, _, _, _) if d > 0.9 => self.escalation_level.max(4),
-            (d, _, i, _) if d > 0.9 && i >= 15 => self.escalation_level.max(5),
-            _ => self.escalation_level,
+
+        let new_level = if self.scroll_depth > 0.85 && self.idle_seconds >= 10 {
+            5
+        } else if self.scroll_depth > 0.85 {
+            4
+        } else if self.scroll_depth > 0.7 {
+            3
+        } else if self.times_scrolled_up >= 1 && self.scroll_depth>0.3 {
+            2
+        } else if self.scroll_depth > 0.25{
+            1
+        } else if self.is_returning {
+            1
+        } else {
+            0
         };
+
+        if new_level > self.escalation_level {
+            self.escalation_level = new_level;
+        }
+
     }
 
     pub fn get_escalation(&self) -> u32 {
