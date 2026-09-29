@@ -1,7 +1,4 @@
-<h1 align="center">
-    <img src="/static/primary.png" alt="still_reading_logo" width="120"><br>
-    STILL READING
-</h1>
+# <img src="/static/primary.png" alt="logo" width="120" align="center" /> STILL READING
 
 >_another web based horror experience actually disguised as a holy boring "governmental" document._
 
@@ -26,6 +23,15 @@ ive used [SvelteKit](https://svelte.dev/docs/kit) (svelte 5 runes) for the front
 there is nothing to click, just a landing page (continue WITHOUT reduced effects is v cool imo). you just read and scroll, a small Rust state machine (`wasm-core`) observes the way you scroll, how far you scroll and how long youre idle for, then decides how odd the document should feel to the user - including text rewriting itself, redactions revealing, and the timestamps are very personal to you
 
 the escalation only goes up, it cant go back down as of now - you can close the tab tho :b
+
+## assets
+
+most of the visuals made in the experience were designed by me :D ( yes i suck and im a newbie so ).
+
+- **logo** - hand drawn in [Canva](https://www.canva.com)
+
+- **seals** - the "D.U.C" seal and its corrupted version ( the one tht shows up at level 4) were designed from absolute scratch in [Figma](https://www.figma.com)
+
 
 ## testing locally
 
@@ -81,6 +87,10 @@ cargo text
 ## accessibility (though id add ts asw)
 
 ive added a content warning (flashing, sudden visual changes, unsetlling text, actually may affect ppl with photosensitivie epilepsy.) BUT YES YOU CAN CONTINUE WITH *REDUCED EFFECTS* which turns of the glitches, shaking and ghost cursor and etc and it also respects `prefers-reduced-motion`
+
+## assets
+
+
 
 ## tests
 
