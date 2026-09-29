@@ -19,6 +19,7 @@
     ];
 
     let escalation = $state(0);
+    let ambientAudio: HTMLAudioElement | null = null;
     let idleSeconds = $state(0);
     let isReturning = $state(false);
     let currentTime = $state(new Date().toLocaleTimeString());
@@ -72,6 +73,13 @@
             if (i > fullText.length) clearInterval(typewriterId);
         }, 40);
         later(() => {showLanding = false;}, 3500);
+        later(() => {
+            showLanding = false;
+            ambientAudio = new Audio('/assets/ambient_music.mp3');
+            ambientAudio.loop = true;
+            ambientAudio.volume = 0.8;
+            ambientAudio.play().catch(() => {});
+        }, 3500)
     };
 
     $effect(() => {
@@ -195,6 +203,8 @@
 
         return () => {
             destroyed = true;
+            ambientAudio?.pause();
+            ambientAudio = null;
             clearInterval(idleTick);
             clearInterval(typewriterId);
             timers.forEach(clearTimeout);
