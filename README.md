@@ -3,7 +3,8 @@
 >_another web based horror experience actually disguised as a holy boring "governmental" document._
 
 <br>
-
+<img width="1230" height="901" alt="stillreading_ss" src="https://github.com/user-attachments/assets/056e54aa-529b-43cc-977d-70741aab0fb8" />
+<br>
 
 
 ## what ts is
@@ -29,8 +30,16 @@ the escalation only goes up, it cant go back down as of now - you can close the 
 most of the visuals made in the experience were designed by me :D ( yes i suck and im a newbie so ).
 
 - **logo** - hand drawn in [Canva](https://www.canva.com)
+  <br>
+<img width="300" height="300" alt="DOCUMENT OF" src="https://github.com/user-attachments/assets/ef228e2f-2e36-4b72-a87e-ce96cd0000c1" />
+<br><br>
+
 
 - **seals** - the "D.U.C" seal and its corrupted version ( the one tht shows up at level 4) were designed from absolute scratch in [Figma](https://www.figma.com)
+  <br><br>
+<img width="200" height="200" alt="Group 3 (1)" src="https://github.com/user-attachments/assets/c2bbd83e-6bbd-49b5-abde-292a68afe293" />
+<img width="200" height="200" alt="Group 10" src="https://github.com/user-attachments/assets/7b37b053-fe52-4133-a894-4c418885868c" />
+
 
 
 ## testing locally
@@ -87,11 +96,3 @@ cargo text
 ## accessibility (though id add ts asw)
 
 ive added a content warning (flashing, sudden visual changes, unsetlling text, actually may affect ppl with photosensitivie epilepsy.) BUT YES YOU CAN CONTINUE WITH *REDUCED EFFECTS* which turns of the glitches, shaking and ghost cursor and etc and it also respects `prefers-reduced-motion`
-
-## assets
-
-
-
-## tests
-
-the escalation logic has Rust unit test covering the threshold ladder, returnign visitors, NaN scroll input, and tht escalation never goes down
