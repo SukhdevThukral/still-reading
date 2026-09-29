@@ -58,6 +58,7 @@ html, body {
     content: '';
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
     width: 6px;
     background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
@@ -94,21 +95,6 @@ html, body {
     justify-content: center;
     flex-shrink: 0;
     margin-top: 4px;
-    margin-bottom: 12px;
-}
-
-.seal-placeholder {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 2px solid #1a1a2e;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.5rem;
-    color: #1a1a2e;
-    letter-spacing: 0.1em;
-    font-weight: bold;
 }
 
 .agency-name {
@@ -224,12 +210,16 @@ html, body {
 }
 
 .warning-box {
-    max-width: 480px;
+    max-width: 700px;
     color: #aaa;
     font-family: 'Courier New', monospace;
     font-size: 0.85rem;
     line-height: 1.7;
     letter-spacing: 0.04em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
 }
 
 .warning-title {
@@ -239,11 +229,16 @@ html, body {
     margin-bottom: 12px;
 }
 
+.warning-content {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
 .warning-actions {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     gap: 12px;
-    justify-content: center;
     margin-top: 24px;
 }
 
@@ -278,21 +273,13 @@ html, body {
 }
 
 .jumpscare-flash.f1 {
-    background-size: 8%; animation: scarePulse 0.18s steps(1) forwards;
-}
+    background-size: 8%; }
 .jumpscare-flash.f2 {
-    background-size: 28%; animation: scarePulse 0.22s steps(1) forwards;
-}
+    background-size: 28%; }
 .jumpscare-flash.f3 {
-    background-size: 65%; animation: scarePulse 0.18s steps(1) forwards;
-}
+    background-size: 65%; }
 .jumpscare-flash.f4 {
     background-size: contain; animation: scareFinal 1.8s ease-out forwards;
-}
-
-@keyframes scarePulse {
-    0%, 99% {opacity: 1;}
-    100% {opacity: 0;}
 }
 
 @keyframes scareFinal {
@@ -310,6 +297,14 @@ html, body {
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     cursor: pointer;
+}
+
+.landing-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    opacity: 0.85;
+    filter: brightness(1);
 }
 
 .enter-btn:hover, .enter-btn:focus-visible {
@@ -423,13 +418,6 @@ html, body {
     50% {opacity: 0;}
 }
 
-@keyframes jumpscareSettle {
-    0% {opacity: 1; filter: contrast(2.5) brightness(2);}
-    15% {opacity: 1; filter: contrast(1.8) brightness(1.5);}
-    50% {opacity: 0.55; filter: contrast(1.3) brightness(1);}
-    100% {opacity: 0.18; filter: contrast(1.1) brightness(0.7) grayscale(0.4);}
-}
-
 @keyframes sealGlitch {
     0%, 100% {transform: translate(0,0);}
     25% {transform: translate(-2px, 0);}
@@ -523,11 +511,6 @@ html, body {
     line-height: 1.7;
     letter-spacing: 0.02em;
     text-align: left;
-}
-
-.seal-slot {
-    flex-shrink: 0;
-    margin-top: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
