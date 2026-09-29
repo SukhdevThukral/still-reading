@@ -94,18 +94,6 @@
             for (const[ms, dark, flash] of SCARE_STEPS) {
                 later(() => {blackout=dark; jumpscareFlash = flash;}, ms);
             }
-            // blackout = true;
-            // later(() => { blackout = false; jumpscareFlash = 1}, 400);
-            // later(() => {jumpscareFlash = 0;}, 580);
-            // later(() => {blackout = true;}, 600);
-            // later(() => {blackout = false; jumpscareFlash = 2;}, 780);
-            // later(() => {jumpscareFlash = 0;}, 1000);
-            // later(() => {blackout=true;}, 1060);
-            // later(() => {blackout = false; jumpscareFlash = 3;}, 1160);
-            // later(() => {jumpscareFlash = 0}, 1340);
-            // later(() => {blackout = true}, 1400);
-            // later(() => {blackout = false; jumpscareFlash = 4;}, 1500);
-            // later(() => {jumpscareFlash = 0;}, 3300);
         }, 4000 + Math.random() * 8000);
         return() => clearTimeout(id);
     });
@@ -222,13 +210,16 @@
     <div class="landing">
         {#if landingStage === 'warning'}
             <div class="warning-box" role="alertdialog" aria-labelledby="cw-title">
-                <p id="cw-title" class="warning-title">CONTENT WARNING</p>
-                <p>
-                    This experience contains flashing and sudden visual changes, unsettling text and one jump scare. IT MAY AFFECT PEOPLE WITH PHOTOSENSITIVE EPILEPSY.
-                </p>
-                <div class="warning-actions">
-                    <button class="enter-btn" onclick={() => begin(false)}>Continue</button>
-                    <button class="enter-btn" onclick={() => begin(true)}>Continue with reduced effects</button>
+                <img src="/primary.png" alt="logo_primary" class="landing-logo"/>
+                <div class="warning-content">
+                    <p id="cw-title" class="warning-title">CONTENT WARNING</p>
+                    <p>
+                        This experience contains flashing and sudden visual changes, unsettling text and one jump scare. IT MAY AFFECT PEOPLE WITH PHOTOSENSITIVE EPILEPSY.
+                    </p>
+                    <div class="warning-actions">
+                        <button class="enter-btn" onclick={() => begin(false)}>Continue</button>
+                        <button class="enter-btn" onclick={() => begin(true)}>Continue with reduced effects</button>
+                    </div>
                 </div>
             </div>
         {:else}
